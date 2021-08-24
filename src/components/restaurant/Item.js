@@ -39,7 +39,7 @@ export const Item = ({data})=> {
 
 const styles = StyleSheet.create({
     mainContainer:{
-        marginHorizontal:responsiveWidth(2),
+        marginHorizontal:responsiveWidth(4),
         marginVertical: responsiveWidth(2)
     },
     image:{
