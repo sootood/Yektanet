@@ -1,10 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Modal,
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -15,6 +14,7 @@ import {
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {Colors} from './assets/Colors';
 import data from './assets/data.json';
 import {TextStyle} from './assets/GlobalStyle';
@@ -28,19 +28,15 @@ import {
   SortModal,
 } from './components';
 import AppContext from './context';
-import {OrderFunc} from './utils/GlobalFunction';
+import {CheckItem, OrderFunc} from './utils/GlobalFunction';
 import {ConvertToFrNum} from './utils/NumConvertor';
 
 const Main = () => {
   const [array, setArray] = useState([]);
-  const [filteredArray, setFilteredArray] = useState([]);
   const [modalType, setModalType] = useState(-1);
+  const [loading, setLoading] = useState(true);
+  const [filteredArray, setFilteredArray] = useState([]);
   const {catSelected, filterSelected, sorting} = useContext(AppContext);
-
-  useEffect(() => {
-    const sortedList = OrderFunc(data, 'title');
-    setArray(sortedList);
-  }, []);
 
   useEffect(() => {
     if (catSelected !== null) {
@@ -51,14 +47,7 @@ const Main = () => {
       );
       setFilteredArray(filteredList);
     }
-
-    if (sorting) {
-      const mainArray =
-        filterSelected !== null || catSelected !== null ? filteredArray : array;
-      const sortingArray = mainArray.sort((a, b) => b.rating - a.rating);
-      setFilteredArray(sortingArray);
-    }
-  }, [catSelected, filterSelected, sorting]);
+  }, [catSelected, filterSelected]);
 
   useEffect(() => {
     if (filterSelected !== null) {
@@ -69,20 +58,34 @@ const Main = () => {
     }
   }, [catSelected, filterSelected]);
 
-  function _checkItem(item, checkValue) {
-    switch (checkValue.propertyName) {
-      case 'discountValueForView':
-        return item['discountValueForView'] > 0;
+  useEffect(() => {
+    setLoading(true);
+    if (sorting) {
+      const mainArray =
+        filterSelected !== null || catSelected !== null ? filteredArray : array;
+      const sortingArray = mainArray.sort((a, b) => b.rating - a.rating);
+      setFilteredArray(sortingArray);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    } else {
+      const mainArray =
+        filterSelected !== null || catSelected !== null ? filteredArray : data;
+      const sortedList = OrderFunc(mainArray, 'title');
+      filterSelected !== null || catSelected !== null
+        ? setFilteredArray(sortedList)
+        : setArray(sortedList);
 
-      default:
-        return item[checkValue.propertyName] === checkValue.propertyValue;
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     }
-  }
+  }, [sorting, filteredArray]);
 
   function _filterFunc(item) {
     const result = [];
     for (let filterItem of filterSelected) {
-      result.push(_checkItem(item, filterItem));
+      result.push(CheckItem(item, filterItem));
     }
 
     if (result.findIndex(item => item === false) === -1) {
@@ -116,6 +119,28 @@ const Main = () => {
     );
   }
 
+  function _listView() {
+    return (
+      <View style={{flex: 1}}>
+        <Filtering
+          onCatPress={() => setModalType(1)}
+          onFilterPress={() => setModalType(2)}
+        />
+        <FlatList
+          keyExtractor={item => item.id.toString()}
+          ListHeaderComponent={_renderHeader}
+          data={
+            catSelected !== null || filterSelected !== null
+              ? filteredArray
+              : array
+          }
+          renderItem={({item}) => <Item data={item} />}
+          ItemSeparatorComponent={() => <View style={styles.line} />}
+        />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={[{flex: 1}]}>
       <Modal
@@ -133,20 +158,7 @@ const Main = () => {
           )}
         </ParentView>
       </Modal>
-      <Filtering
-        onCatPress={() => setModalType(1)}
-        onFilterPress={() => setModalType(2)}
-      />
-      <FlatList
-        ListHeaderComponent={_renderHeader}
-        data={
-          catSelected !== null || filterSelected !== null
-            ? filteredArray
-            : array
-        }
-        renderItem={({item}) => <Item data={item} />}
-        ItemSeparatorComponent={() => <View style={styles.line} />}
-      />
+      {loading ? <ActivityIndicator color={Colors.green} /> : _listView()}
     </SafeAreaView>
   );
 };
