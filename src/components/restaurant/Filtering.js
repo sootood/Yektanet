@@ -29,6 +29,7 @@ export const Filtering = Props => {
           isSelected={filterSelected !== null}
           counter={filterSelected !== null ? filterSelected.length : 0}
           deleteTag={() => null}
+          
         />
       </View>
     );
