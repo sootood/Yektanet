@@ -5,12 +5,14 @@ const ContextProvider = ({children}) => {
  
   const [catSelected, setCatSelected] = useState(null)
   const [filterSelected, setFilterSelected] = useState(null)
+  const [sorting, setSorting] = useState(false)
 
   
   const context = {
  
     catSelected, setCatSelected,
-    filterSelected, setFilterSelected
+    filterSelected, setFilterSelected,
+    sorting, setSorting
   };
 
   return <AppContext.Provider value={context}>{children}</AppContext.Provider>;

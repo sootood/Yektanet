@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     paddingVertical: responsiveWidth(1),
     alignItems: 'center',
     paddingHorizontal: responsiveWidth(1.5),
-    maxHeight: responsiveHeight(4.5),
+    maxHeight: responsiveHeight(5),
     alignContent:'center',
   },
 });

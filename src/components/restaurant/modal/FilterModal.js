@@ -34,12 +34,7 @@ export const FilterModal = (Props) => {
       filteredArray.findIndex(value => value.id === item.id) !== -1;
     return (
       <View
-        style={{
-          flex: 1,
-          justifyContent: 'space-between',
-          flexDirection: 'row-reverse',
-          paddingVertical: responsiveWidth(2),
-        }}>
+        style={styles.mainCon}>
         <Text style={[TextStyle.largeThinFont]}>{item.title}</Text>
         <Toggle
           value={isEnabled}
@@ -47,14 +42,14 @@ export const FilterModal = (Props) => {
           thumbInActiveComponent={
             <Icon
               name={'close'}
-              size={responsiveFontSize(4)}
+              size={responsiveFontSize(3)}
               color={Colors.lightGrayBack}
             />
           }
           thumbActiveComponent={
             <Icon
               name={'check'}
-              size={responsiveFontSize(4)}
+              size={responsiveFontSize(3)}
               color={Colors.green}
             />
           }
@@ -67,11 +62,11 @@ export const FilterModal = (Props) => {
             borderActiveColor: Colors.green,
             borderInActiveColor: Colors.lightGrayBack,
             width: responsiveWidth(15),
-            height: responsiveWidth(10),
+            height: responsiveWidth(8),
           }}
           thumbButton={{
-            width: responsiveWidth(10),
-            height: responsiveWidth(10),
+            width: responsiveWidth(8),
+            height: responsiveWidth(8),
             radius: responsiveWidth(5),
             activeBackgroundColor: Colors.white,
             inActiveBackgroundColor: Colors.white,
@@ -96,7 +91,7 @@ export const FilterModal = (Props) => {
           justifyContent: 'space-between',
         }}>
         <Text style={[TextStyle.largeBlackFont]}>{Strings.filter}</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=> setFilterSelected(null)}>
           <Text style={[TextStyle.mediumThinFont, {color: Colors.green}]}>
             {Strings.removeFilters}
           </Text>
@@ -122,4 +117,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightGrayOPC,
     height: responsiveWidth(0.3),
   },
+  mainCon:{
+    flex: 1,
+    justifyContent: 'space-between',
+    flexDirection: 'row-reverse',
+    paddingVertical: responsiveWidth(2),
+  }
 });

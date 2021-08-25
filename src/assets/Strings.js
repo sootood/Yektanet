@@ -7,5 +7,6 @@ export const Strings = {
     chooseCategory:'انتخاب دسته بندی',
     back:'بازگشت',
     removeFilters:'حذف همه فیلترها',
-    submit:'اعمال'
+    submit:'اعمال',
+    highScore:'بالاترین امتیاز'
 }

@@ -19,7 +19,14 @@ import {Colors} from './assets/Colors';
 import data from './assets/data.json';
 import {TextStyle} from './assets/GlobalStyle';
 import {Strings} from './assets/Strings';
-import {CatModal, Filtering, Item, FilterModal, ParentView} from './components';
+import {
+  CatModal,
+  Filtering,
+  Item,
+  FilterModal,
+  ParentView,
+  SortModal,
+} from './components';
 import AppContext from './context';
 import {OrderFunc} from './utils/GlobalFunction';
 import {ConvertToFrNum} from './utils/NumConvertor';
@@ -28,7 +35,7 @@ const Main = () => {
   const [array, setArray] = useState([]);
   const [filteredArray, setFilteredArray] = useState([]);
   const [modalType, setModalType] = useState(-1);
-  const {catSelected, filterSelected,setFilterSelected,setCatSelected} = useContext(AppContext);
+  const {catSelected, filterSelected, sorting} = useContext(AppContext);
 
   useEffect(() => {
     const sortedList = OrderFunc(data, 'title');
@@ -37,16 +44,26 @@ const Main = () => {
 
   useEffect(() => {
     if (catSelected !== null) {
-      const mainArray = filterSelected!==null  ? filteredArray : data;
+      const mainArray = filterSelected !== null ? filteredArray : array;
 
       const filteredList = mainArray.filter(
         item => item.category === catSelected?.value,
       );
       setFilteredArray(filteredList);
     }
-    if (filterSelected !== null) {
 
-      const mainArray = filterSelected!==null && catSelected!==null ? filteredArray :  data;
+    if (sorting) {
+      const mainArray =
+        filterSelected !== null || catSelected !== null ? filteredArray : array;
+      const sortingArray = mainArray.sort((a, b) => b.rating - a.rating);
+      setFilteredArray(sortingArray);
+    }
+  }, [catSelected, filterSelected, sorting]);
+
+  useEffect(() => {
+    if (filterSelected !== null) {
+      const mainArray =
+        filterSelected !== null && catSelected !== null ? filteredArray : array;
       const filteredList = mainArray.filter(item => _filterFunc(item));
       setFilteredArray(filteredList);
     }
@@ -73,8 +90,6 @@ const Main = () => {
     }
   }
 
-
-
   function _renderHeader() {
     const dataList =
       catSelected !== null || filterSelected !== null ? filteredArray : array;
@@ -85,6 +100,7 @@ const Main = () => {
           {ConvertToFrNum(openRes?.length)} {Strings.isOpenText}
         </Text>
         <TouchableOpacity
+          onPress={() => setModalType(3)}
           style={{flexDirection: 'row-reverse', alignItems: 'center'}}>
           <Icon
             name={'sort'}
@@ -93,7 +109,7 @@ const Main = () => {
             style={{marginHorizontal: responsiveWidth(2)}}
           />
           <Text style={[TextStyle.mediumBlackFont, {color: Colors.green}]}>
-            {Strings.sorting}
+            {sorting ? Strings.highScore : Strings.sorting}
           </Text>
         </TouchableOpacity>
       </View>
@@ -110,8 +126,10 @@ const Main = () => {
         <ParentView onClose={() => setModalType(-1)}>
           {modalType === 1 ? (
             <CatModal onClose={() => setModalType(-1)} />
-          ) : (
+          ) : modalType === 2 ? (
             <FilterModal onClose={() => setModalType(-1)} />
+          ) : (
+            <SortModal onClose={() => setModalType(-1)} />
           )}
         </ParentView>
       </Modal>
@@ -121,7 +139,11 @@ const Main = () => {
       />
       <FlatList
         ListHeaderComponent={_renderHeader}
-        data={catSelected !== null || filterSelected!== null ? filteredArray : array}
+        data={
+          catSelected !== null || filterSelected !== null
+            ? filteredArray
+            : array
+        }
         renderItem={({item}) => <Item data={item} />}
         ItemSeparatorComponent={() => <View style={styles.line} />}
       />
