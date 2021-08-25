@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import {
   responsiveFontSize,
+  responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -56,7 +57,7 @@ export const Tag = ({item, isSelected, ...Props}) => {
       <Text
         style={[
           TextStyle.mediumThinFont,
-          {color: isSelected ? Colors.white : Colors.green},
+          {color: isSelected ? Colors.white : Colors.green, marginHorizontal:responsiveWidth(0.5),textAlignVertical:'center', textAlign:'center'},
         ]}>
         {item.title}
       </Text>
@@ -74,10 +75,12 @@ const styles = StyleSheet.create({
   tagContainer: {
     ...CurveCard,
     flexDirection: 'row',
-    marginHorizontal: responsiveWidth(0.5),
+    marginHorizontal: responsiveWidth(1),
     borderRadius: responsiveWidth(4),
     paddingVertical: responsiveWidth(1),
     alignItems: 'center',
     paddingHorizontal: responsiveWidth(1.5),
+    maxHeight: responsiveHeight(4.5),
+    alignContent:'center',
   },
 });

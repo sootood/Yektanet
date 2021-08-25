@@ -19,13 +19,7 @@ import {Colors} from './assets/Colors';
 import data from './assets/data.json';
 import {TextStyle} from './assets/GlobalStyle';
 import {Strings} from './assets/Strings';
-import {
-  CatModal,
-  Filtering,
-  Item,
-  FilterModal,
-  ParentView,
-} from './components';
+import {CatModal, Filtering, Item, FilterModal, ParentView} from './components';
 import AppContext from './context';
 import {OrderFunc} from './utils/GlobalFunction';
 import {ConvertToFrNum} from './utils/NumConvertor';
@@ -34,7 +28,7 @@ const Main = () => {
   const [array, setArray] = useState([]);
   const [filteredArray, setFilteredArray] = useState([]);
   const [modalType, setModalType] = useState(-1);
-  const {catSelected,filterSelected} = useContext(AppContext)
+  const {catSelected, filterSelected,setFilterSelected,setCatSelected} = useContext(AppContext);
 
   useEffect(() => {
     const sortedList = OrderFunc(data, 'title');
@@ -42,35 +36,48 @@ const Main = () => {
   }, []);
 
   useEffect(() => {
-    if (catSelected!==undefined) {
+    if (catSelected !== null) {
+      const mainArray = filterSelected!==null  ? filteredArray : data;
 
-      const mainArray = data
-
-      const filteredList = mainArray.filter(item => item.category === catSelected?.value)
-      setFilteredArray(filteredList)
+      const filteredList = mainArray.filter(
+        item => item.category === catSelected?.value,
+      );
+      setFilteredArray(filteredList);
     }
-    /*else{
-      setFilteredArray([])
-    }*/
-  }, [catSelected])
-  
-  useEffect(() => {
-    console.log('khare', catSelected)
-    if (filterSelected!==null) {
+    if (filterSelected !== null) {
 
-      // const mainArray = data
-
-      // const filteredList = mainArray.filter(item => filterSelected.filter(value=> value. === true)  )
-      // console.log('khareeee', filteredList)
-      // setFilteredArray(filteredList)
+      const mainArray = filterSelected!==null && catSelected!==null ? filteredArray :  data;
+      const filteredList = mainArray.filter(item => _filterFunc(item));
+      setFilteredArray(filteredList);
     }
-    /*else{
-      setFilteredArray([])
-    }*/
-  }, [filterSelected])
+  }, [catSelected, filterSelected]);
+
+  function _checkItem(item, checkValue) {
+    switch (checkValue.propertyName) {
+      case 'discountValueForView':
+        return item['discountValueForView'] > 0;
+
+      default:
+        return item[checkValue.propertyName] === checkValue.propertyValue;
+    }
+  }
+
+  function _filterFunc(item) {
+    const result = [];
+    for (let filterItem of filterSelected) {
+      result.push(_checkItem(item, filterItem));
+    }
+
+    if (result.findIndex(item => item === false) === -1) {
+      return item;
+    }
+  }
+
+
 
   function _renderHeader() {
-      const dataList = catSelected!==null || filterSelected!==null ? filteredArray :array
+    const dataList =
+      catSelected !== null || filterSelected !== null ? filteredArray : array;
     const openRes = dataList?.filter(item => item.is_open === true);
     return (
       <View style={styles.headerContainer}>
@@ -94,31 +101,31 @@ const Main = () => {
   }
 
   return (
-      <SafeAreaView style={[{flex: 1, }]}>
-        <Modal
-          visible={modalType !== -1}
-          onRequestClose={() => setModalType(-1)}
-          transparent={true}
-          animationType={'slide'}>
-          <ParentView onClose={() => setModalType(-1)}>
-            {modalType === 1 ? (
-              <CatModal onClose={() => setModalType(-1)} />
-            ) : (
-              <FilterModal onClose={() => setModalType(-1)} />
-            )}
-          </ParentView>
-        </Modal>
-        <Filtering
-          onCatPress={() => setModalType(1)}
-          onFilterPress={() => setModalType(2)}
-        />
-        <FlatList
-          ListHeaderComponent={_renderHeader}
-          data={catSelected!==null ? filteredArray: array}
-          renderItem={({item}) => <Item data={item} />}
-          ItemSeparatorComponent={() => <View style={styles.line} />}
-        />
-      </SafeAreaView>
+    <SafeAreaView style={[{flex: 1}]}>
+      <Modal
+        visible={modalType !== -1}
+        onRequestClose={() => setModalType(-1)}
+        transparent={true}
+        animationType={'slide'}>
+        <ParentView onClose={() => setModalType(-1)}>
+          {modalType === 1 ? (
+            <CatModal onClose={() => setModalType(-1)} />
+          ) : (
+            <FilterModal onClose={() => setModalType(-1)} />
+          )}
+        </ParentView>
+      </Modal>
+      <Filtering
+        onCatPress={() => setModalType(1)}
+        onFilterPress={() => setModalType(2)}
+      />
+      <FlatList
+        ListHeaderComponent={_renderHeader}
+        data={catSelected !== null || filterSelected!== null ? filteredArray : array}
+        renderItem={({item}) => <Item data={item} />}
+        ItemSeparatorComponent={() => <View style={styles.line} />}
+      />
+    </SafeAreaView>
   );
 };
 

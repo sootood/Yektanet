@@ -15,8 +15,8 @@ import {Button} from '../../common/Button';
 import AppContext from '../../../context';
 
 export const FilterModal = (Props) => {
-  const [filteredArray, setFilteredArray] = useState([]);
-  const {setFilterSelected} = useContext(AppContext);
+  const {setFilterSelected,filterSelected} = useContext(AppContext);
+  const [filteredArray, setFilteredArray] = useState( filterSelected === null ?[]:filterSelected);
 
   function _toggleSwitch(item) {
     const index = filteredArray.findIndex(value => value.id === item.id);
