@@ -5,4 +5,7 @@ export const Strings = {
     filter:'فیلتر',
     category:'همه دسته بندی',
     chooseCategory:'انتخاب دسته بندی',
+    back:'بازگشت',
+    removeFilters:'حذف همه فیلترها',
+    submit:'اعمال'
 }

@@ -14,6 +14,7 @@
     "react-native": "0.65.1",
     "react-native-fast-image": "^8.3.7",
     "react-native-responsive-dimensions": "^3.1.1",
+    "react-native-toggle-element": "^1.0.1",
     "react-native-vector-icons": "^8.1.0"
   },
   "devDependencies": {

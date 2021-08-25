@@ -34,7 +34,7 @@ const Main = () => {
   const [array, setArray] = useState([]);
   const [filteredArray, setFilteredArray] = useState([]);
   const [modalType, setModalType] = useState(-1);
-  const {catSelected} = useContext(AppContext)
+  const {catSelected,filterSelected} = useContext(AppContext)
 
   useEffect(() => {
     const sortedList = OrderFunc(data, 'title');
@@ -42,22 +42,36 @@ const Main = () => {
   }, []);
 
   useEffect(() => {
-    console.log('khare', catSelected)
     if (catSelected!==undefined) {
 
-      const mainArray = array
+      const mainArray = data
 
-      const filteredList = mainArray.filter(item => item.category === catSelected.value)
-      console.log('khareeee', filteredList)
+      const filteredList = mainArray.filter(item => item.category === catSelected?.value)
       setFilteredArray(filteredList)
     }
     /*else{
       setFilteredArray([])
     }*/
   }, [catSelected])
+  
+  useEffect(() => {
+    console.log('khare', catSelected)
+    if (filterSelected!==null) {
+
+      // const mainArray = data
+
+      // const filteredList = mainArray.filter(item => filterSelected.filter(value=> value. === true)  )
+      // console.log('khareeee', filteredList)
+      // setFilteredArray(filteredList)
+    }
+    /*else{
+      setFilteredArray([])
+    }*/
+  }, [filterSelected])
 
   function _renderHeader() {
-    const openRes = array?.filter(item => item.is_open === true);
+      const dataList = catSelected!==null || filterSelected!==null ? filteredArray :array
+    const openRes = dataList?.filter(item => item.is_open === true);
     return (
       <View style={styles.headerContainer}>
         <Text style={[TextStyle.largeBlackFont]}>
@@ -80,7 +94,7 @@ const Main = () => {
   }
 
   return (
-      <SafeAreaView style={[{flex: 1}]}>
+      <SafeAreaView style={[{flex: 1, }]}>
         <Modal
           visible={modalType !== -1}
           onRequestClose={() => setModalType(-1)}
@@ -90,7 +104,7 @@ const Main = () => {
             {modalType === 1 ? (
               <CatModal onClose={() => setModalType(-1)} />
             ) : (
-              <FilterModal />
+              <FilterModal onClose={() => setModalType(-1)} />
             )}
           </ParentView>
         </Modal>
@@ -100,7 +114,7 @@ const Main = () => {
         />
         <FlatList
           ListHeaderComponent={_renderHeader}
-          data={filteredArray.length!==0 ? filteredArray: array}
+          data={catSelected!==null ? filteredArray: array}
           renderItem={({item}) => <Item data={item} />}
           ItemSeparatorComponent={() => <View style={styles.line} />}
         />

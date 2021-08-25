@@ -1,4 +1,6 @@
 
+import {Button} from './common/Button'
+// 
 import { Item } from './restaurant/Item';
 import { Filtering } from './restaurant/Filtering';
 import {CatModal} from './restaurant/modal/CatModal'
@@ -10,5 +12,7 @@ export {
     Filtering,
     CatModal,
     FilterModal,
-    ParentView
+    ParentView,
+    Button,
+    
 }

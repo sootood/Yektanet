@@ -68,7 +68,15 @@ export const CatModal = ({onClose}) => {
         flex: 1,
         padding: responsiveWidth(5),
       }}>
-      <Text style={[TextStyle.mediumThinFont]}>{Strings.chooseCategory}</Text>
+      {subArray!==null ?
+        <TouchableOpacity onPress={()=>setSubArray(null)} style={{flexDirection:'row-reverse', alignItems:'center',marginLeft:-responsiveWidth(2)}}>
+          <Icon name={"chevron-right"} size={responsiveFontSize(4)}/>
+          <Text style={[TextStyle.mediumThinFont]}>{Strings.back}</Text>
+        </TouchableOpacity>
+
+      :      <Text style={[TextStyle.mediumThinFont]}>{Strings.chooseCategory}</Text>
+
+      }
       <View
         style={{
           flexDirection: 'row-reverse',
